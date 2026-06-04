@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Song Rotation &middot; The Well Church</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Asap:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#f4efe6;--paper-2:#efe8db;--ink:#23201b;--ink-soft:#5f594e;--line:#d8cfbd;--accent:#b5562f;--accent-soft:#e7d3c6;--teal:#2f6b62;--shadow:0 1px 0 rgba(35,32,27,.04),0 12px 30px -18px rgba(35,32,27,.35)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Asap",system-ui,sans-serif;font-size:15px;line-height:1.45;background-image:radial-gradient(rgba(35,32,27,.025) 1px,transparent 1px);background-size:4px 4px}
+  .wrap{max-width:1080px;margin:0 auto;padding:34px 22px 80px}
+  header.top{border-bottom:2px solid var(--ink);padding-bottom:18px}
+  .brand h1{font-family:"Fraunces",Georgia,serif;font-weight:900;font-size:38px;line-height:.95;letter-spacing:-.01em;margin:0}
+  .brand .sub{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);margin-top:8px}
+  .updated{margin-top:10px;font-size:13px;color:var(--ink-soft)}
+  .stats{display:flex;gap:34px;margin:26px 0 22px;flex-wrap:wrap}
+  .stat .n{font-family:"Fraunces",serif;font-weight:600;font-size:30px}
+  .stat .l{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+  .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+  .seg{display:flex;flex-wrap:wrap;border:1.5px solid var(--ink);border-radius:2px;overflow:hidden}
+  .seg button{appearance:none;border:0;background:transparent;font:inherit;padding:8px 13px;cursor:pointer;color:var(--ink);border-right:1px solid var(--line)}
+  .seg button:last-child{border-right:0}
+  .seg button.on{background:var(--ink);color:var(--paper)}
+  .seg button:hover:not(.on){background:var(--paper-2)}
+  .search{flex:1;min-width:170px}
+  .search input{width:100%;font:inherit;padding:9px 12px;border:1.5px solid var(--line);background:#fff;border-radius:2px;color:var(--ink)}
+  table{width:100%;border-collapse:collapse;background:#fffdf8;box-shadow:var(--shadow);border-radius:3px;overflow:hidden}
+  thead th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;padding:13px 14px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+  thead th.num,tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
+  tbody td{padding:12px 14px;border-bottom:1px solid var(--paper-2)}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:var(--paper-2)}
+  .song{font-family:"Fraunces",serif;font-size:18px;font-weight:500}
+  .lib{font-size:11px;color:var(--ink-soft)}
+  .pill{display:inline-block;font-size:12px;font-variant-numeric:tabular-nums;padding:2px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+  .pill.zero{background:#e7e2d6;color:var(--ink-soft)}
+  .muted{color:var(--ink-soft)}
+  .never{color:var(--accent);font-style:italic}
+  tr.detail td{background:var(--paper-2);padding:0}
+  .hist{padding:8px 16px 16px}
+  .hist h4{font-family:"Fraunces",serif;margin:10px 0 8px;font-weight:600}
+  .hist ol{margin:0;padding-left:18px;columns:2;column-gap:30px}
+  .hist li{margin:3px 0;font-variant-numeric:tabular-nums}
+  .hist .svc{color:var(--ink-soft);font-size:13px}
+  section.services{margin-top:46px}
+  section.services h2{font-family:"Fraunces",serif;font-weight:600;font-size:24px;border-bottom:1.5px solid var(--ink);padding-bottom:8px}
+  .svc-card{padding:12px 0;border-bottom:1px solid var(--paper-2)}
+  .svc-card .when{font-family:"Fraunces",serif;font-size:17px}
+  .svc-card .list{color:var(--ink-soft);font-size:14px;margin-top:3px}
+  footer{margin-top:50px;font-size:12px;color:var(--ink-soft);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><h1>Song&nbsp;Rotation</h1><div class="sub">The Well Church &middot; usage ledger</div></div>
+    <div class="updated">Updated Thursday 04 June 2026, 14:08</div>
+  </header>
+  <div class="stats">
+    <div class="stat"><div class="n">45</div><div class="l">Songs</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">Logged uses</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">Services</div></div>
+  </div>
+  <div class="controls">
+    <div class="seg" id="seg">
+      <button data-sort="last_used" class="on">Recently used</button>
+      <button data-sort="oldest_used">Not used longest</button>
+      <button data-sort="most_used">Most used</button>
+      <button data-sort="least_used">Least used</button>
+      <button data-sort="this_year">This year</button>
+      <button data-sort="last_90">Last 90 days</button>
+      <button data-sort="never_used">Never used</button>
+    </div>
+    <div class="search"><input id="q" type="search" placeholder="Search songs..."></div>
+  </div>
+  <table>
+    <thead><tr><th>Song</th><th class="num">Total</th><th>Last played</th><th>Previous</th><th class="num">Gap</th><th class="num">90d</th><th class="num">This yr</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <section class="services"><h2>Recent services</h2><div id="services"></div></section>
+  <footer>A snapshot, refreshed automatically each Monday. Live data lives on the church computer.</footer>
+</div>
+<script>
+const SONGS = [{"uuid": "8D491AB1-2A35-4618-BE1B-FEBDBE7B86D3", "name": "10,000 reasons - Bethel -  6 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "E6ADBC3D-F4BD-46F1-9233-DB8E9243DA4B", "name": "A thousand Hallelujahs - North Palm - 5 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "CE0BE085-88B7-41F7-9E24-BDC457AB5783", "name": "A thousand halleujahs - Brooke Ligertwood - 5min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "B0DEEDCC-67F2-42F2-8FD1-DD2862DD59B2", "name": "all hail - Revere - 4 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "4FDD0793-8EE5-4471-9C35-DC1866E1BB46", "name": "All hail king jesus - Bethany Wahole - 5 mins", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "27DCF433-D17E-4821-BDB7-3E1AB460C84C", "name": "Alleluia - Elevation - 4min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "A1024A8A-4828-4C4B-9461-A18104238724", "name": "As the deer + Give thanks - North Palm 6 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "893B6F5E-33A9-4ABA-95DC-A3B78F9ED3C0", "name": "awake my soul - red rcoks - 6 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "F03F46A2-EE56-4247-B107-DB55B1A91B14", "name": "Because He Lives - Midway Worship - 6 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "27730E33-C972-4C43-9D44-94FEE26226C4", "name": "before the throne of God above - Sovereign grace - 4 mins", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "93C76A27-7E80-46EC-826D-95482EC7C91E", "name": "Breathe - Give Me Jesus - citpointe - 6min 30", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "520D7225-DE3A-4478-9426-3EAF329B8979", "name": "Breathe into we fall down - Brooke Ligertwood - 11min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "9CC77E2B-154B-49FD-97FA-53A243BB836F", "name": "Christ our hope in life and death - 5min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "2D619F40-D2AD-4F46-94EB-7E04DA8634C3", "name": "Christ the true and better - Justin - 4 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "1F36D8BD-86BB-4B54-B05B-8A80F8E4BE92", "name": "Come thou fount - Shane and Shane - 6 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "FC28D614-F0DA-44FC-8464-5A2AD0C5932C", "name": "Goodbye yesterday - elevation - 5min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "E1F506AE-B129-4B25-A64E-21E949667C6D", "name": "Goodness of God - Bethel - 5min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "B0B2355D-227D-402F-891D-44A11F543DA7", "name": "Great is thy faithfullness - north palm - 7min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "6A0F164F-5AE4-4567-88C5-1A615B71E4AE", "name": "Heart of Worship   Nothing Else - Jesus Image - 8 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "ACB233D6-C627-432A-BFBB-A64291A9008E", "name": "His glory and my good - city alight - 5min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "75F7770B-3236-45AE-AFCE-8560D1BF2EAF", "name": "holy forever - gateway - 6min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "EE662596-DE7F-404E-A28E-A75DBBE3A744", "name": "Hymn of Heaven - Michael Monroe - 5 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "5B389055-314F-4D03-AE61-8152CCE24E18", "name": "I thank God - Jwalkers - 4 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "DE545D53-48A6-4D9B-96CC-18E20BF9F8AD", "name": "In christ alone - Shane and Shane - 5 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "274FF0B2-324D-428A-A76E-5A53F1CD9353", "name": "Is he worthy - cece winans - 5min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "655ED4CE-6D16-492F-BB9B-8478FB35BD63", "name": "Jesus paid it all - north palm - 7 min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "9E707ECF-72F0-4A75-B9B4-8E7743191BB8", "name": "King Of Glory - passion -  4min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "B4A7198F-3DCB-4C1F-9F47-10FFE225EEF4", "name": "King of Kings - Hillsong - 5pm", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "3F2A8450-C841-48D3-BC36-EDEC97E9DBC2", "name": "Living Hope _ What A Beautiful Name - Citipointe Worship - 7min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "5632314E-9060-4D45-8942-4739155D243A", "name": "Living hope - John wilds - 5min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "FCBA0FB4-E324-406C-9460-3560A309BE22", "name": "man of sorrows - hillsong - 5mins", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "F6D759A5-082B-4FD5-A079-1490CFFE3505", "name": "New wine - Hillson - 4min 30sec intro", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "22C8360F-7612-4953-AE94-F996899C92AA", "name": "o Praise the name - Hillsong - 5min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "EA5D54D8-45C9-43F7-8804-96E219F301CF", "name": "Open the eyes of my heart - Paul Baloche - 5min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "F22F766E-B16A-4826-AFE3-FF02392C530E", "name": "Praise - Elevation - 5min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "4B0C2557-5E86-4062-B7DF-F7F5EACDF2E2", "name": "Same God - Elevation - 8min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "CEBECE76-E610-4499-8FB6-C57856225186", "name": "shout to the lord - darlene cece - 5min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "024DC6B5-06CD-4085-941A-FF528F2E14BC", "name": "To God be the Glory - Justin - 4min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "67A32EBC-D40D-4151-93F6-45AA4478FB67", "name": "Trading my sorrows - Nashville worship - 4min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "BEDFABF0-C257-416D-B53D-8422DED154B9", "name": "Washed - Elevation Rythym - 4min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "BF5B9066-7179-4420-B01B-92DBC6346946", "name": "What an awesome God - Phil Wickham - 3min", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "EBCC6E17-89D5-4174-917B-DF70D3C25D6D", "name": "Who You Say I Am - Hillsong Worship - 5min synced mp4", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "F68F5277-168D-4ABD-8B9D-1B4787EABE3D", "name": "yet not i but christ in me - city alight - 5 mins", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "FE64B92E-A107-47C7-9D4D-AD8EE1C97FCB", "name": "You've Already Won -  Shane & Shane - 6min ", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}, {"uuid": "05E67EE6-AF3B-4E03-80F4-7D0C8E25E275", "name": "test", "library": "Worship", "total_uses": 0, "last_played": null, "previous_played": null, "gap_days": null, "days_since_last": null, "uses_last_90": 0, "uses_last_365": 0, "uses_this_year": 0}];
+const SERVICES = [];
+const HISTORY = {};
+let currentSort = "last_used";
+let openUuid = null;
+const $ = s => document.querySelector(s);
+function fmt(iso){ if(!iso) return null; const d=new Date(iso); return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}); }
+function ago(d){ if(d==null) return ""; if(d===0) return "today"; if(d===1) return "yesterday"; if(d<31) return d+" days ago"; if(d<365) return Math.round(d/30)+" months ago"; return (d/365).toFixed(1)+" years ago"; }
+function esc(t){ return (t||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+const SORTS = {
+  least_used:(a,b)=>a.total_uses-b.total_uses||a.name.localeCompare(b.name),
+  most_used:(a,b)=>b.total_uses-a.total_uses||a.name.localeCompare(b.name),
+  last_used:(a,b)=>(a.days_since_last==null?1e9:a.days_since_last)-(b.days_since_last==null?1e9:b.days_since_last)||a.name.localeCompare(b.name),
+  oldest_used:(a,b)=>(b.days_since_last==null?-1:b.days_since_last)-(a.days_since_last==null?-1:a.days_since_last)||a.name.localeCompare(b.name),
+  this_year:(a,b)=>b.uses_this_year-a.uses_this_year||a.name.localeCompare(b.name),
+  last_90:(a,b)=>b.uses_last_90-a.uses_last_90||a.name.localeCompare(b.name),
+};
+function render(){
+  const q=$("#q").value.trim().toLowerCase();
+  let rows=SONGS.filter(r=>!q||r.name.toLowerCase().includes(q));
+  if(currentSort==="never_used"){ rows=rows.filter(r=>r.total_uses===0).sort((a,b)=>a.name.localeCompare(b.name)); }
+  else rows=rows.slice().sort(SORTS[currentSort]);
+  const tb=$("#rows"); tb.innerHTML="";
+  if(!rows.length){ tb.innerHTML='<tr><td colspan="7" class="muted" style="padding:30px;text-align:center">No songs.</td></tr>'; return; }
+  for(const r of rows){
+    const tr=document.createElement("tr");
+    const last=r.last_played?`${fmt(r.last_played)} <span class="muted">- ${ago(r.days_since_last)}</span>`:'<span class="never">never sung</span>';
+    tr.innerHTML=`<td><span class="song">${esc(r.name)}</span>${r.library?` <span class="lib">${esc(r.library)}</span>`:""}</td>`+
+      `<td class="num"><span class="pill ${r.total_uses?'':'zero'}">${r.total_uses}</span></td>`+
+      `<td>${last}</td>`+
+      `<td>${r.previous_played?fmt(r.previous_played):'<span class="muted">—</span>'}</td>`+
+      `<td class="num">${r.gap_days!=null?r.gap_days+'d':'<span class="muted">—</span>'}</td>`+
+      `<td class="num">${r.uses_last_90}</td><td class="num">${r.uses_this_year}</td>`;
+    tr.onclick=()=>toggle(r.uuid,tr);
+    tb.appendChild(tr);
+    if(r.uuid===openUuid) detail(r,tr);
+  }
+}
+function toggle(uuid,tr){
+  if(openUuid===uuid){ openUuid=null; const n=tr.nextElementSibling; if(n&&n.classList.contains("detail"))n.remove(); return; }
+  document.querySelectorAll("tr.detail").forEach(e=>e.remove());
+  openUuid=uuid; const r=SONGS.find(s=>s.uuid===uuid); detail(r,tr);
+}
+function detail(r,tr){
+  if(tr.nextElementSibling&&tr.nextElementSibling.classList.contains("detail"))return;
+  const plays=HISTORY[r.uuid]||[];
+  const items=plays.length?plays.map(p=>`<li>${fmt(p.played_at)}${p.service?` <span class="svc">— ${esc(p.service)}</span>`:""}</li>`).join(""):'<li class="muted">No recorded uses yet.</li>';
+  const det=document.createElement("tr"); det.className="detail";
+  det.innerHTML=`<td colspan="7"><div class="hist"><h4>${esc(r.name)} — full history (${plays.length})</h4><ol>${items}</ol></div></td>`;
+  tr.after(det);
+}
+function services(){
+  const box=$("#services");
+  if(!SERVICES.length){ box.innerHTML='<div class="muted" style="padding:14px 0">No services recorded yet.</div>'; return; }
+  box.innerHTML=SERVICES.map(s=>`<div class="svc-card"><div class="when">${esc(s.label||fmt(s.started_at))}</div><div class="list">${s.songs.length?s.songs.map(esc).join(" · "):"<em>no songs logged</em>"}</div></div>`).join("");
+}
+$("#seg").onclick=e=>{ const b=e.target.closest("button"); if(!b)return; $("#seg").querySelectorAll("button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); currentSort=b.dataset.sort; openUuid=null; render(); };
+$("#q").oninput=render;
+render(); services();
+</script>
+</body>
+</html>
